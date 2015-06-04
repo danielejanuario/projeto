@@ -10,7 +10,7 @@ import java.util.List;
 
 /**
  *
- * @author Isabela
+ * @author Isabela g
  */
 public class Mapping {
     
