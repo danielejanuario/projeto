@@ -3,7 +3,7 @@ package projetofinal;
 
 public class Principal {
 	public Principal(){
-		Acoes a = new Acoes();
+		MontaGrafo a = new MontaGrafo();
 		a.setVisible(true);
 	}
 	

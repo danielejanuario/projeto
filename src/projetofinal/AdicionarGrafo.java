@@ -1,6 +1,6 @@
 package projetofinal;
 
-public class AdicionarGrafo extends Acoes {
+public class AdicionarGrafo extends MontaGrafo {
 
     public AdicionarGrafo(String nome) {
         AdicionarGrafo.getGraph().getModel().beginUpdate();

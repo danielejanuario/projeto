@@ -12,7 +12,7 @@ import javax.swing.JFrame;
 import com.mxgraph.swing.mxGraphComponent;
 import com.mxgraph.view.mxGraph;
 
-public class Acoes extends JFrame {
+public class MontaGrafo extends JFrame {
 
     protected static mxGraph graph = new mxGraph();
     protected static HashMap m = new HashMap();
@@ -30,7 +30,7 @@ public class Acoes extends JFrame {
         return graph;
     }
 
-    public Acoes() {
+    public MontaGrafo() {
         initGUI();
     }
 
