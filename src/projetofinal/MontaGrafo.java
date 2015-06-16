@@ -46,7 +46,7 @@ public class MontaGrafo extends JFrame {
 
         setLayout(new FlowLayout(FlowLayout.RIGHT));
 
-        botaoAdd = new JButton("Adicionar");
+        botaoAdd = new JButton("Add");
         getContentPane().add(botaoAdd);
         botaoAdd.setPreferredSize(new Dimension(100, 40));
         botaoAdd.addActionListener(new ActionListener() {
@@ -82,7 +82,7 @@ public class MontaGrafo extends JFrame {
             }
         });
 
-        botaoDel = new JButton("Deletar");
+        botaoDel = new JButton("Delete");
         getContentPane().add(botaoDel);
         botaoDel.setPreferredSize(new Dimension(100, 40));
         botaoDel.addActionListener(new ActionListener() {
@@ -94,7 +94,7 @@ public class MontaGrafo extends JFrame {
             }
         });
 
-        botaoSair = new JButton("Sair");
+        botaoSair = new JButton("Close");
         getContentPane().add(botaoSair);
         botaoSair.setPreferredSize(new Dimension(100, 40));
         botaoSair.addActionListener(new ActionListener() {
