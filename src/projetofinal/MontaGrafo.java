@@ -35,12 +35,13 @@ public class MontaGrafo extends JFrame {
     }
 
     private void initGUI() {
-        setSize(900, 700);
+
+        setSize(1900, 1000);
         setLocationRelativeTo(null);
         setUndecorated(true);
 
         graphComponent = new mxGraphComponent(graph);
-        graphComponent.setPreferredSize(new Dimension(895, 650));
+        graphComponent.setPreferredSize(new Dimension(1890, 930));
         getContentPane().add(graphComponent);
 
         setLayout(new FlowLayout(FlowLayout.RIGHT));
@@ -64,8 +65,20 @@ public class MontaGrafo extends JFrame {
                 bv2.addUserStory("User Story teste 04", 4, 4);
                 mp.addBusinessValue(bv2);
 
-                AdicionarGrafo add = new AdicionarGrafo(mp.getBusinessValue(1).getUserStory(0).getContent());
+                mostrarGrafo(mp);
+            }
 
+            private void mostrarGrafo(Mapping mp) {
+                int x = 0;
+                int y = 10;
+                for (int j = 0; j < mp.getSize(); j++) {
+                    x = 10;
+                    for (int i = 0; i < mp.getBusinessValue(j).getSize(); i++) {
+                        AdicionarGrafo add = new AdicionarGrafo(mp.getBusinessValue(j).getUserStory(i).getContent(), x, y);
+                        x = x + 430;
+                    }
+                    y = y + 230;
+                }
             }
         });
 

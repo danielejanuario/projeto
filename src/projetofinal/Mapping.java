@@ -24,5 +24,9 @@ public class Mapping {
     public BusinessValue getBusinessValue(int id) {
         return _businessValue.get(id);
     }
+    
+    public int getSize(){
+        return _businessValue.size();
+    }
 
 }

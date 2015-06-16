@@ -29,5 +29,9 @@ public class BusinessValue {
     public UserStory getUserStory(int id) {
         return _userStories.get(id);
     }
+    
+    public int getSize(){
+        return _userStories.size();
+    }
 
 }
