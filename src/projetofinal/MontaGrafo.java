@@ -74,13 +74,13 @@ public class MontaGrafo extends JFrame {
 
     private void initGUI() {
 
-        setSize(1900, 1000);
+        setSize(1500, 800);
         setLocationRelativeTo(null);
         setUndecorated(true);
         Cursor cursor = new Cursor(Cursor.HAND_CURSOR);
 
         graphComponent = new mxGraphComponent(graph);
-        graphComponent.setPreferredSize(new Dimension(1890, 930));
+        graphComponent.setPreferredSize(new Dimension(1490, 745));
         getContentPane().add(graphComponent);
 
         setLayout(new FlowLayout(FlowLayout.RIGHT));
