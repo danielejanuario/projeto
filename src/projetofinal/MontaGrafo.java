@@ -54,26 +54,12 @@ public class MontaGrafo extends JFrame {
     }
 
     public MontaGrafo() {
-
         vtPersistencia = new Serializa();
-        vertice = vtPersistencia.lerVertices();
         bvs = new HashSet<>();
         _effort = new HashSet<>();
-        us = new EstruturaDados();
-        insertUsInFile();
+        vertice = vtPersistencia.lerVertices();
         createUS();
         initGUI();
-    }
-
-    private void insertUsInFile() {
-        us.addDados("User Story 01", 2, 1, 2);
-        us.addDados("User Story 02", 4, 8, 3);
-        us.addDados("User Story 03", 6, 2, 1);
-        us.addDados("User Story 04", 1, 3, 1);
-        us.addDados("User Story 05", 4, 5, 2);
-        us.addDados("User Story 06", 5, 5, 4);
-        us.addDados("User Story 07", 2, 7, 4);
-        us.addDados("User Story 08", 3, 8, 4);
     }
 
     private void getBusinessValuesFromFile(Set<String> vertices) {
