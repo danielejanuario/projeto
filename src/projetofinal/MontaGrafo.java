@@ -12,6 +12,14 @@ import javax.swing.JFrame;
 import com.mxgraph.swing.mxGraphComponent;
 import com.mxgraph.view.mxGraph;
 import java.awt.Cursor;
+import java.util.Collections;
+import java.util.Comparator;
+import static java.util.Comparator.comparing;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import static javafx.scene.input.KeyCode.T;
 
 public class MontaGrafo extends JFrame {
 
@@ -22,11 +30,16 @@ public class MontaGrafo extends JFrame {
     private JButton botaoDel;
     private JButton botaoSair;
     private Object cell;
-    private BusinessValue bv = new BusinessValue();
-    private BusinessValue bv2 = new BusinessValue();
-    private BusinessValue bv3 = new BusinessValue();
     private Mapping mp = new Mapping();
-   private boolean var = false;
+    private boolean var = false;
+    private boolean grafo = false;
+    private final Map<String, UserStory> vertice;
+    private final Serializa vtPersistencia;
+    private Set<String> vertices;
+    private HashSet<Integer> bvs;
+    private EstruturaDados us;
+    private HashSet<Integer> _effort;
+    private HashSet<UserStory> _teste;
 
     public static HashMap getM() {
         return m;
@@ -36,51 +49,103 @@ public class MontaGrafo extends JFrame {
         return graph;
     }
 
+    private Set<String> todosVertices() {
+        return vertice.keySet();
+    }
+
     public MontaGrafo() {
+
+        vtPersistencia = new Serializa();
+        vertice = vtPersistencia.lerVertices();
+        bvs = new HashSet<>();
+        _effort = new HashSet<>();
+        us = new EstruturaDados();
+        insertUsInFile();
+        createUS();
         initGUI();
+    }
+
+    private void insertUsInFile() {
+        us.addDados("User Story 01", 2, 1, 2);
+        us.addDados("User Story 02", 4, 8, 3);
+        us.addDados("User Story 03", 6, 2, 1);
+        us.addDados("User Story 04", 1, 3, 1);
+        us.addDados("User Story 05", 4, 5, 2);
+        us.addDados("User Story 06", 5, 5, 4);
+        us.addDados("User Story 07", 2, 7, 4);
+        us.addDados("User Story 08", 3, 8, 4);
+    }
+
+    private void getBusinessValuesFromFile(Set<String> vertices) {
+        for (String n : vertices) {
+            bvs.add(vertice.get(n).getBusinessValue());
+        }
+    }
+
+    private void sortBusinessValueByPriority(BusinessValue bv) {
+        Collections.sort(bv.getList(), comparing((userStory) -> userStory.getPriority(), Collections.reverseOrder()));
+    }
+
+    private void sortBusinessValueByEffort(BusinessValue bv) {
+        Collections.sort(bv.getList(), comparing((userStory) -> userStory.getEffort()));
+    }
+
+    private void sortBusinessValue(BusinessValue bv) {
+        sortBusinessValueByPriority(bv);
+        sortBusinessValueByEffort(bv);
     }
 
     private void createUS() {
         if (!var) {
-            bv.addUserStory("As a depositor I want to Deposit and maintain datasets\nthrough a simple web interface so that I don’t need to\ninstall and learn new software to deposit", 1, 1);
-            bv.addUserStory("As a depositor I want to Have a user interface that is \nfamiliar to me so that I feel like all the University \nsystems are joined up", 2, 2);
-            mp.addBusinessValue(bv);
+            vertices = this.todosVertices();
+            getBusinessValuesFromFile(vertices);
 
-            bv2.addUserStory("As a depositor I want to Deposit and maintain datasets\n through Pure so that I have a single one-stop shop for \nmanaging my research outputs", 3, 3);
-            bv2.addUserStory("As a depositor I want to Deposit and maintain datasets \nthrough Virtual Research Environments and other workflow \ntools so that I can continue to work with tools with which I’m familiar", 4, 4);
-            bv2.addUserStory("As a depositor I want to Deposit the files that I have \nso that I don’t have to spend a lot of time finding the right \nversion and converting to the right format", 5, 5);
-            bv2.addUserStory("As a depositor I want to Place data under an embargo so \nthat My right of first-use is protected. I can fulfil my \nconfidentiality responsibilities", 6, 6);
-            mp.addBusinessValue(bv2);
+            for (int i : bvs) {
+                BusinessValue bv = new BusinessValue();
+                for (String n : vertices) {
+                    if (vertice.get(n).getBusinessValue() == i) {
+                        String uS = vertice.get(n).getContent()
+                                + "\n Effort: " + vertice.get(n).getEffort()
+                                + "\n Priority: " + vertice.get(n).getPriority();
+                        bv.addUserStory(uS, vertice.get(n).getEffort(), vertice.get(n).getPriority(), vertice.get(n).getBusinessValue());
 
-            bv3.addUserStory("As a depositor I want to Apply licenses to datasets so \nthat My IP rights are protected appropriately", 7, 7);
-            bv3.addUserStory("As a depositor I want to Allow my collaborators privileged\n access to datasets so that We continue to have a \nproductive relationship", 8, 8);
-            bv3.addUserStory("As a depositor I want to Deposit arbitrarily large files \nso that I am not limited in what files I can and cannot deposit", 9, 9);
-            mp.addBusinessValue(bv3);
+                    }
+                }
+
+                sortBusinessValue(bv);
+
+                mp.addBusinessValue(bv);
+            }
         }
     }
 
     private void mostrarGrafo(Mapping mp) {
         int x = 0;
         int y = 10;
-        for (int j = 0; j < mp.getSize(); j++) {
+
+        for (int j = mp.getSize() - 1; j >= 0; j--) {
             x = 10;
+            AdicionarGrafo addBV = new AdicionarGrafo();
+            addBV.AdicionarBV("Business Value: " + mp.getBusinessValue(j).getUserStory(0).getBusinessValue(), x, y);
+            y = y + 40;
             for (int i = 0; i < mp.getBusinessValue(j).getSize(); i++) {
-                AdicionarGrafo add = new AdicionarGrafo(mp.getBusinessValue(j).getUserStory(i).getContent(), x, y);
-                x = x + 430;
+                AdicionarGrafo add = new AdicionarGrafo();
+                add.AddGrafo(mp.getBusinessValue(j).getUserStory(i).getContent(), x, y);
+                x = x + 330;
             }
-            y = y + 230;
+            y = y + 215;
         }
     }
 
     private void initGUI() {
 
-        setSize(1500, 800);
+        setSize(1200, 700);
         setLocationRelativeTo(null);
         setUndecorated(true);
         Cursor cursor = new Cursor(Cursor.HAND_CURSOR);
 
         graphComponent = new mxGraphComponent(graph);
-        graphComponent.setPreferredSize(new Dimension(1490, 745));
+        graphComponent.setPreferredSize(new Dimension(1190, 645));
         getContentPane().add(graphComponent);
 
         setLayout(new FlowLayout(FlowLayout.RIGHT));
@@ -92,11 +157,14 @@ public class MontaGrafo extends JFrame {
         botaoAdd.addActionListener(new ActionListener() {
 
             public void actionPerformed(ActionEvent e) {
+                if (!grafo) {
+                    //createUS();
+                    mostrarGrafo(mp);
+                    AdicionarLinha linha = new AdicionarLinha(mp);
+                    var = true;
+                }
+                grafo = true;
 
-                createUS();
-                mostrarGrafo(mp);
-                AdicionarLinha linha = new AdicionarLinha(mp);
-                var = true;
             }
 
         });

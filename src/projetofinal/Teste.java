@@ -21,12 +21,12 @@ public class Teste {
         BusinessValue bv2 = new BusinessValue();
         Mapping mp = new Mapping();
 
-        bv.addUserStory("User Story teste 01", 1, 1);
-        bv.addUserStory("User Story teste 02", 2, 2);
+        bv.addUserStory("User Story teste 01", 1, 1, 1);
+        bv.addUserStory("User Story teste 02", 2, 2, 1);
         mp.addBusinessValue(bv);
 
-        bv2.addUserStory("User Story teste 03", 3, 3);
-        bv2.addUserStory("User Story teste 04", 4, 4);
+        bv2.addUserStory("User Story teste 03", 3, 3, 2);
+        bv2.addUserStory("User Story teste 04", 4, 4, 2);
         mp.addBusinessValue(bv2);
 
         System.out.println(mp.getBusinessValue(1).getUserStory(0).getContent());

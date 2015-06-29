@@ -21,8 +21,8 @@ public class BusinessValue {
 
     private final List<UserStory> _userStories = new ArrayList<>();
 
-    public void addUserStory(String content, int effort, int priority) {
-        UserStory us = new UserStory(content, effort, priority);
+    public void addUserStory(String content, int effort, int priority, int bv) {
+        UserStory us = new UserStory(content, effort, priority, bv);
         _userStories.add(us);
     }
 
@@ -30,6 +30,9 @@ public class BusinessValue {
         return _userStories.get(id);
     }
     
+    public List<UserStory> getList(){
+        return _userStories.subList(0, _userStories.size());
+    }
    
     public int getSize(){
         return _userStories.size();
