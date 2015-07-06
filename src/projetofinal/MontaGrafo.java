@@ -12,14 +12,9 @@ import javax.swing.JFrame;
 import com.mxgraph.swing.mxGraphComponent;
 import com.mxgraph.view.mxGraph;
 import java.awt.Cursor;
-import java.util.Collections;
-import java.util.Comparator;
-import static java.util.Comparator.comparing;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import static javafx.scene.input.KeyCode.T;
 
 public class MontaGrafo extends JFrame {
 
@@ -38,8 +33,8 @@ public class MontaGrafo extends JFrame {
     private Set<String> vertices;
     private HashSet<Integer> bvs;
     private EstruturaDados us;
-    private HashSet<Integer> _effort;
-    private HashSet<UserStory> _teste;
+   
+   
 
     public static HashMap getM() {
         return m;
@@ -56,7 +51,7 @@ public class MontaGrafo extends JFrame {
     public MontaGrafo() {
         vtPersistencia = new Serializa();
         bvs = new HashSet<>();
-        _effort = new HashSet<>();
+      
         vertice = vtPersistencia.lerVertices();
         createUS();
         initGUI();
@@ -66,19 +61,6 @@ public class MontaGrafo extends JFrame {
         for (String n : vertices) {
             bvs.add(vertice.get(n).getBusinessValue());
         }
-    }
-
-    private void sortBusinessValueByPriority(BusinessValue bv) {
-        Collections.sort(bv.getList(), comparing((userStory) -> userStory.getPriority(), Collections.reverseOrder()));
-    }
-
-    private void sortBusinessValueByEffort(BusinessValue bv) {
-        Collections.sort(bv.getList(), comparing((userStory) -> userStory.getEffort()));
-    }
-
-    private void sortBusinessValue(BusinessValue bv) {
-        sortBusinessValueByPriority(bv);
-        sortBusinessValueByEffort(bv);
     }
 
     private void createUS() {
@@ -102,6 +84,57 @@ public class MontaGrafo extends JFrame {
 
                 mp.addBusinessValue(bv);
             }
+        }
+    }
+
+    private void sortBusinessValue(BusinessValue bv) {
+        for (int k = bv.getSize() - 1; k >= 1; k--) {
+            for (int j = 0; j < k; j++) {
+                if (bv.getUserStory(j).getEffort() > bv.getUserStory(j + 1).getEffort()) {
+                    sortEffort(bv, j);
+
+                    for (int a = bv.getSize() - 1; a >= 1; a--) {
+                        for (int b = 0; b < k; b++) {
+                            sortPriority(bv, b);
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    private void sortEffort(BusinessValue bv, int j) {
+        int auxPriority;
+        int auxEffort;
+        String auxContent;
+        auxPriority = bv.getUserStory(j).getPriority();
+        auxEffort = bv.getUserStory(j).getEffort();
+        auxContent = bv.getUserStory(j).getContent();
+        bv.getUserStory(j).setPriority(bv.getUserStory(j + 1).getPriority());
+        bv.getUserStory(j).setContent(bv.getUserStory(j + 1).getContent());
+        bv.getUserStory(j).setEffort(bv.getUserStory(j + 1).getEffort());
+        bv.getUserStory(j + 1).setPriority(auxPriority);
+        bv.getUserStory(j + 1).setEffort(auxEffort);
+        bv.getUserStory(j + 1).setContent(auxContent);
+    }
+
+    private void sortPriority(BusinessValue bv, int b) {
+        int auxPriority;
+        int auxEffort;
+        String auxContent;
+        if (bv.getUserStory(b).getPriority() < bv.getUserStory(b + 1).getPriority()) {
+            auxPriority = bv.getUserStory(b).getPriority();
+            auxEffort = bv.getUserStory(b).getEffort();
+            auxContent = bv.getUserStory(b).getContent();
+
+            bv.getUserStory(b).setPriority(bv.getUserStory(b + 1).getPriority());
+            bv.getUserStory(b).setContent(bv.getUserStory(b + 1).getContent());
+            bv.getUserStory(b).setEffort(bv.getUserStory(b + 1).getEffort());
+
+            bv.getUserStory(b + 1).setPriority(auxPriority);
+            bv.getUserStory(b + 1).setEffort(auxEffort);
+            bv.getUserStory(b + 1).setContent(auxContent);
+
         }
     }
 
