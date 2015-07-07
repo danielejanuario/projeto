@@ -15,6 +15,11 @@ import java.awt.Cursor;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JTextArea;
+import javax.swing.JTextField;
 
 public class MontaGrafo extends JFrame {
 
@@ -25,6 +30,7 @@ public class MontaGrafo extends JFrame {
     private JButton botaoDel;
     private JButton botaoSair;
     private Object cell;
+    private Object cell2;
     private Mapping mp = new Mapping();
     private boolean var = false;
     private boolean grafo = false;
@@ -33,8 +39,6 @@ public class MontaGrafo extends JFrame {
     private Set<String> vertices;
     private HashSet<Integer> bvs;
     private EstruturaDados us;
-   
-   
 
     public static HashMap getM() {
         return m;
@@ -51,7 +55,7 @@ public class MontaGrafo extends JFrame {
     public MontaGrafo() {
         vtPersistencia = new Serializa();
         bvs = new HashSet<>();
-      
+
         vertice = vtPersistencia.lerVertices();
         createUS();
         initGUI();
@@ -72,9 +76,11 @@ public class MontaGrafo extends JFrame {
                 BusinessValue bv = new BusinessValue();
                 for (String n : vertices) {
                     if (vertice.get(n).getBusinessValue() == i) {
+
                         String uS = vertice.get(n).getContent()
                                 + "\n Effort: " + vertice.get(n).getEffort()
                                 + "\n Priority: " + vertice.get(n).getPriority();
+
                         bv.addUserStory(uS, vertice.get(n).getEffort(), vertice.get(n).getPriority(), vertice.get(n).getBusinessValue());
 
                     }
@@ -92,12 +98,15 @@ public class MontaGrafo extends JFrame {
             for (int j = 0; j < k; j++) {
                 if (bv.getUserStory(j).getEffort() > bv.getUserStory(j + 1).getEffort()) {
                     sortEffort(bv, j);
+                }
 
-                    for (int a = bv.getSize() - 1; a >= 1; a--) {
-                        for (int b = 0; b < k; b++) {
-                            sortPriority(bv, b);
-                        }
+                //for (int b = bv.getSize() - 1; b >= 1; b--) {
+                for (int a = 0; a < k; a++) {
+                    if (bv.getUserStory(a).getPriority() < bv.getUserStory(a + 1).getPriority()) {
+                        sortPriority(bv, a);
                     }
+
+                    //}
                 }
             }
         }
@@ -122,20 +131,19 @@ public class MontaGrafo extends JFrame {
         int auxPriority;
         int auxEffort;
         String auxContent;
-        if (bv.getUserStory(b).getPriority() < bv.getUserStory(b + 1).getPriority()) {
-            auxPriority = bv.getUserStory(b).getPriority();
-            auxEffort = bv.getUserStory(b).getEffort();
-            auxContent = bv.getUserStory(b).getContent();
 
-            bv.getUserStory(b).setPriority(bv.getUserStory(b + 1).getPriority());
-            bv.getUserStory(b).setContent(bv.getUserStory(b + 1).getContent());
-            bv.getUserStory(b).setEffort(bv.getUserStory(b + 1).getEffort());
+        auxPriority = bv.getUserStory(b).getPriority();
+        auxEffort = bv.getUserStory(b).getEffort();
+        auxContent = bv.getUserStory(b).getContent();
 
-            bv.getUserStory(b + 1).setPriority(auxPriority);
-            bv.getUserStory(b + 1).setEffort(auxEffort);
-            bv.getUserStory(b + 1).setContent(auxContent);
+        bv.getUserStory(b).setPriority(bv.getUserStory(b + 1).getPriority());
+        bv.getUserStory(b).setContent(bv.getUserStory(b + 1).getContent());
+        bv.getUserStory(b).setEffort(bv.getUserStory(b + 1).getEffort());
 
-        }
+        bv.getUserStory(b + 1).setPriority(auxPriority);
+        bv.getUserStory(b + 1).setEffort(auxEffort);
+        bv.getUserStory(b + 1).setContent(auxContent);
+
     }
 
     private void mostrarGrafo(Mapping mp) {
@@ -150,9 +158,9 @@ public class MontaGrafo extends JFrame {
             for (int i = 0; i < mp.getBusinessValue(j).getSize(); i++) {
                 AdicionarGrafo add = new AdicionarGrafo();
                 add.AddGrafo(mp.getBusinessValue(j).getUserStory(i).getContent(), x, y);
-                x = x + 330;
+                x = x + 230;
             }
-            y = y + 215;
+            y = y + 115;
         }
     }
 
@@ -200,6 +208,48 @@ public class MontaGrafo extends JFrame {
             }
         });
 
+        botaoDel = new JButton("Edit");
+        getContentPane().add(botaoDel);
+        botaoDel.setPreferredSize(new Dimension(100, 40));
+        botaoDel.setCursor(cursor);
+        botaoDel.addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent arg0) {
+
+                Object value = graph.getModel().getValue(cell);
+
+                for (int j = mp.getSize() - 1; j >= 0; j--) {
+                    for (int i = 0; i < mp.getBusinessValue(j).getSize(); i++) {
+                        if (mp.getBusinessValue(j).getUserStory(i).getContent() == value) {
+                            JFrame frame = new JFrame("Edit User Story");
+                            frame.setSize(600, 300);
+                            frame.setVisible(true);
+                            frame.setLocationRelativeTo(null);
+                            //frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+                            JPanel panel = new JPanel();
+
+                            JLabel content = new JLabel("Content: ");
+
+                            JTextArea insertContent = new JTextArea();
+                            insertContent.setAutoscrolls(true);
+                            insertContent.setPreferredSize(new Dimension(300, 200));
+                            insertContent.setText(mp.getBusinessValue(j).getUserStory(i).getContent());
+                            insertContent.setEditable(true);
+
+                            panel.add(content);
+                            panel.add(insertContent);
+
+                            frame.add(panel);
+
+                        }
+                    }
+
+                }
+
+            }
+        });
+
         botaoSair = new JButton("Close");
         getContentPane().add(botaoSair);
         botaoSair.setPreferredSize(new Dimension(100, 40));
@@ -214,9 +264,11 @@ public class MontaGrafo extends JFrame {
 
         graphComponent.getGraphControl().addMouseListener(new MouseAdapter() {
 
+            @Override
             public void mouseReleased(MouseEvent e) {
                 cell = graphComponent.getCellAt(e.getX(), e.getY());
             }
+
         });
     }
 
